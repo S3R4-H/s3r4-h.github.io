@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S3R4FH!! — Portfolio</title>
+  <meta name="description" content="Aspiring Security Enthusiast in Web, Cloud, and AI — Portfolio of S3R4FH!!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --bg-soft: #11161d;
+      --text: #e6edf3;
+      --muted: #9aa7b2;
+      --accent: #7c3aed; /* purple */
+      --accent-2: #22d3ee; /* cyan */
+      --card: #0f141b;
+      --border: #1f2937;
+      --link: #93c5fd;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(124,58,237,0.15), transparent 60%),
+                  radial-gradient(900px 500px at 90% -20%, rgba(34,211,238,0.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Header / Nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: saturate(1.2) blur(8px);
+      background: linear-gradient(180deg, rgba(11,15,20,0.85), rgba(11,15,20,0.65));
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      font-family: "JetBrains Mono", monospace;
+      height: 25px;
+    }
+    .brand .logo {
+      width: 40px; height: 30px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 24px rgba(124,58,237,0.35);
+    }
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      margin-left: 1rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 8px;
+      transition: background 0.2s ease, color 0.2s ease;
+      font-weight: 600;
+    }
+    nav a:hover, nav a:focus {
+      background: rgba(124,58,237,0.15);
+      outline: none;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3.5rem 1rem 2rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      margin: 0 0 0.5rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .hero .alias {
+      font-family: "JetBrains Mono", monospace;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin: 0.25rem 0 0.75rem;
+    }
+    .hero .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 0.75rem;
+    }
+    .hero .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16,185,129,0.12);
+      color: #a7f3d0;
+      border: 1px solid rgba(16,185,129,0.35);
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+    .hero .card {
+      background: linear-gradient(180deg, rgba(17,22,29,0.9), rgba(15,20,27,0.9));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .hero .card h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .hero .card p { margin: 0.25rem 0; }
+
+    /* Sections */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    section h2 {
+      font-size: 1.6rem;
+      margin: 0 0 1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+    .col-12 { grid-column: span 12; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    .panel h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    ul {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: grid; gap: 0.5rem;
+    }
+    li {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 0.6rem 0.75rem;
+      border-radius: 10px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.35);
+      color: #d6bcfa;
+      margin-right: 0.4rem;
+    }
+    .muted { color: var(--muted); }
+
+    /* Writeups & Contacts placeholders */
+    .empty {
+      border: 1px dashed rgba(255,255,255,0.18);
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.02),
+        rgba(255,255,255,0.02) 10px,
+        rgba(255,255,255,0.04) 10px,
+        rgba(255,255,255,0.04) 20px
+      );
+      padding: 1rem;
+      border-radius: 12px;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+      padding: 2rem 1rem 4rem;
+      text-align: center;
+      background: var(--bg-soft);
+    }
+    .btn-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,0.45);
+      background: rgba(34,211,238,0.12);
+      color: #a5f3fc;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+    .btn-top:hover { transform: translateY(-1px); background: rgba(34,211,238,0.18); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .col-6 { grid-column: span 12; }
+      .col-4 { grid-column: span 12; }
+      nav a { margin-left: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <a id="top" aria-hidden="true"></a>
+  <header>
+    <div class="nav" role="navigation" aria-label="Primary">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>A...T</span>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#writeups">Writeups</a>
+        <a href="#contacts">Contacts</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="intro-title">
+      <div>
+        <h1 id="intro-title">My N4m3 i3</h1>
+        <div class="alias" aria-label="Alias">S3R4FH!!</div>
+        <span class="status" title="Current status">
+          <span aria-hidden="true">●</span> CURRENTLY: Student
+        </span>
+      </div>
+      <div class="card" aria-labelledby="quick-card-title">
+        <h3 id="quick-card-title">Quick links</h3>
+        <p>• <a href="#writeups" class="muted">Read writeups</a></p>
+        <p>• <a href="#contacts" class="muted">Get in touch</a></p>
+      </div>
+    </section>
+
+    <section id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About</h2>
+      <div class="panel">
+        <p>I am currently pursuing a BSc in Computer Science, with a growing passion for cybersecurity. My journey into security began in 2024, when I started exploring online learning platforms to build my knowledge. By late 2025, I began participating in Capture the Flag (CTF) competitions, which have helped me broaden my skill set.</p>
+      </div>
+    </section>
+
+    <section id="skills" aria-labelledby="skills-title">
+      <div class="grid">
+        <div class="panel col-6">
+        </div>
+        <div class="panel col-6">
+    
+        </div>
+        <div class="panel col-12">
+          
+        </div>
+      </div>
+    </section>
+
+    <section id="interests" aria-labelledby="interests-title">
+      
+      <div class="grid">
+        
+      </div>
+    </section>
+
+    <section id="writeups" aria-labelledby="writeups-title">
+      <h2 id="writeups-title">Writeups</h2>
+      <div class="empty">
+        
+      </div>
+    </section>
+
+    <section id="contacts" aria-labelledby="contacts-title">
+      <h2 id="contacts-title">Contacts & Others</h2>
+      <div class="panel">
+       
+        <ul>
+          <li>Email: <a href="mailto:seraphta04@gmail.com">https://gmail.com</a></li>
+          <li>GitHub: <a href="https://github.com/S3R4-H" target="_blank" rel="noopener">https://github.com/</a></li>
+          <li>CTFtime: <a href="https://ctftime.org/team/408681" target="_blank" rel="noopener">https://CTFTimes.com</a></li>
+          <li>Discord: <a href="https://discord.gg/t68JpUcT" target="_blank" rel="noopener">https://discord.com</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>THANK YOU FOR STOPPING BY!!</p>
+    <a class="btn-top" href="#top" aria-label="Back to top">↑ Back to top</a>
+  </footer>
+</body>
+</html>
