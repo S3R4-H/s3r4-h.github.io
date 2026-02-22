@@ -86,8 +86,6 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 3.5rem 1rem 2rem;
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
       gap: 2rem;
     }
     .hero h1 {
@@ -121,21 +119,6 @@
       border-radius: 999px;
       font-size: 0.9rem;
     }
-    .hero .card {
-      background: linear-gradient(180deg, rgba(17,22,29,0.9), rgba(15,20,27,0.9));
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-    .hero .card h3 {
-      margin: 0 0 0.75rem;
-      font-size: 1.1rem;
-      color: var(--muted);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
-    .hero .card p { margin: 0.25rem 0; }
 
     /* Sections */
     section {
@@ -259,17 +242,12 @@
 
   <main>
     <section class="hero" aria-labelledby="intro-title">
-      <div>
+      <div style="text-align:center;">
         <h1 id="intro-title">My N4m3 i3</h1>
         <div class="alias" aria-label="Alias">S3R4FH!!</div>
         <span class="status" title="Current status">
           <span aria-hidden="true">●</span> CURRENTLY: Student
         </span>
-      </div>
-      <div class="card" aria-labelledby="quick-card-title">
-        <h3 id="quick-card-title">Quick links</h3>
-        <p>• <a href="#writeups" class="muted">Read writeups</a></p>
-        <p>• <a href="#contacts" class="muted">Get in touch</a></p>
       </div>
     </section>
 
@@ -287,6 +265,7 @@
         <ul>
           
         </ul>
+        
       </div>
     </section>
 
@@ -310,5 +289,3 @@
   </footer>
 </body>
 </html>
-
-
