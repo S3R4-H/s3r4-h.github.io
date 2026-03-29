@@ -341,7 +341,7 @@ footer {
         Hey — I'm <strong>S3R4FH</strong>, a student and security enthusiast focused on
         <span class="hl">offensive security</span> and <span class="hl">vulnerability research</span>.
         I play CTFs, build intentionally vulnerable labs to sharpen skills, and document
-        everything I learn along the way. This is where my notes live — writeups, labs, and experiments.
+        everything I learn along the way. This is where my notes live, writeups, labs, and experiments.
       </p>
 
       <div class="divider"></div>
@@ -435,7 +435,6 @@ var POSTS = [
   }
 ];
 
-// 2. CORE FUNCTIONS (Defined globally so HTML can see them)
 function showPage(name) {
   console.log("Switching to page:", name); // Debugging line
   
@@ -472,7 +471,7 @@ function renderPosts(filter) {
     return;
   }
 
-  // Simple render logic
+  // render logic
   list.forEach(p => {
     const li = document.createElement('div');
     li.className = 'post-item';
