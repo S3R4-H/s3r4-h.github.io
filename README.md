@@ -4,7 +4,7 @@ This repository contains the source code for my personal security portfolio and 
 
 ## 🎯 Purpose
 The goal of this project is to document my journey through **Offensive Security**, **Digital Forensics**, and **AI Security**. It serves as a central hub for:
-- 🚩 **CTF Writeups:** Detailed walkthroughs of platforms like PicoCTF, HTB, and local events.
+- 🚩 **CTF Writeups:** Detailed walkthroughs of CTFs from (https://ctftime.org/event/list/upcoming).
 - 🧪 **Vulnerability Labs:** Documentation on building and breaking intentionally vulnerable environments.
 - 🤖 **AI Security:** Research into LLM vulnerabilities and agentic AI defense.
 - And more...
