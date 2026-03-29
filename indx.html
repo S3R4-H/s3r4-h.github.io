@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S3R4FH — Security Researcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Inconsolata:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #050508;
+  --surface: #0d0d14;
+  --border:  #1a1a28;
+  --accent:  #00ff9d;
+  --accent2: #00c8ff;
+  --accent3: #ff3e6c;
+  --text:    #c8d0e0;
+  --dim:     #4a5068;
+  --mid:     #7a8498;
+  --mono:    'Share Tech Mono', monospace;
+  --body:    'Inconsolata', monospace;
+  --head:    'Rajdhani', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.75;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* LOGO */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 52px 24px 28px;
+}
+
+.hex-svg { width: 80px; height: 80px; opacity: 0.18; flex-shrink: 0; }
+.hex-svg.left  { animation: rotSlow 22s linear infinite; }
+.hex-svg.right { animation: rotSlow 16s linear infinite reverse; }
+@keyframes rotSlow { to { transform: rotate(360deg); } }
+
+.logo-core { text-align: center; }
+
+.logo-text {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 38px;
+  letter-spacing: 10px;
+  color: var(--accent);
+  position: relative;
+  animation: glow 3s ease-in-out infinite, flicker 9s linear infinite;
+}
+@keyframes glow {
+  0%,100% { text-shadow: 0 0 6px var(--accent), 0 0 22px rgba(0,255,157,.25); }
+  50%      { text-shadow: 0 0 14px var(--accent), 0 0 50px rgba(0,255,157,.4); }
+}
+@keyframes flicker {
+  0%,98%,100% { opacity:1; } 99% { opacity:.55; }
+}
+
+.logo-text::before,
+.logo-text::after {
+  content: attr(data-text);
+  position: absolute; left: 0; top: 0;
+  font-family: var(--mono); font-size: 38px; letter-spacing: 10px;
+  width: 100%; pointer-events: none;
+}
+.logo-text::before { color: var(--accent3); animation: glA 7s infinite; text-shadow: none; }
+.logo-text::after  { color: var(--accent2); animation: glB 7s infinite; text-shadow: none; }
+
+@keyframes glA {
+  0%,93%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  94% { clip-path: inset(25% 0 55% 0); transform: translate(-5px,1px); }
+  96% { clip-path: inset(60% 0 20% 0); transform: translate(5px,-1px); }
+  98% { clip-path: inset(75% 0 5%  0); transform: translate(-2px,2px); }
+}
+@keyframes glB {
+  0%,92%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  93% { clip-path: inset(45% 0 35% 0); transform: translate(5px,-1px); }
+  95% { clip-path: inset(10% 0 75% 0); transform: translate(-5px,1px); }
+  97% { clip-path: inset(80% 0 5%  0); transform: translate(3px,0); }
+}
+
+.logo-cursor {
+  font-family: var(--mono); font-size: 38px; color: var(--accent);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+.logo-sub {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
+  color: var(--dim); margin-top: 8px; text-transform: uppercase;
+}
+
+/* NAV */
+nav {
+  display: flex; justify-content: center;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  background: rgba(5,5,8,.92); backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 500;
+}
+nav a {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--dim); text-decoration: none;
+  padding: 14px 36px; border-right: 1px solid var(--border);
+  transition: color .2s, background .2s; position: relative;
+}
+nav a:first-child { border-left: 1px solid var(--border); }
+nav a::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 2px; background: var(--accent);
+  transform: scaleX(0); transition: transform .2s;
+}
+nav a:hover        { color: var(--accent); background: rgba(0,255,157,.03); }
+nav a.active       { color: var(--accent); }
+nav a.active::after, nav a:hover::after { transform: scaleX(1); }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+.container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+/* SECTION LABEL */
+.sec-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 4px;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 14px;
+}
+.sec-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--border), transparent);
+}
+
+/* PROMPT */
+.prompt {
+  font-family: var(--mono); font-size: 12px; color: var(--dim);
+  margin-bottom: 36px; display: flex; align-items: center; flex-wrap: wrap;
+}
+.p-user { color: var(--accent); }
+.p-host { color: var(--accent2); }
+.p-path { color: var(--mid); }
+.p-cur  {
+  display: inline-block; width: 8px; height: 13px;
+  background: var(--accent); margin-left: 4px; vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+/* HOME */
+.home-wrap { padding: 56px 0 64px; }
+
+.about-text { font-size: 15px; color: var(--mid); line-height: 1.85; max-width: 600px; }
+.about-text strong { color: var(--text); }
+.about-text .hl { color: var(--accent); font-family: var(--mono); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 44px 0; }
+
+/* AREAS */
+.areas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+  gap: 8px;
+}
+.area-tag {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+  color: var(--mid); background: var(--surface); border: 1px solid var(--border);
+  padding: 9px 14px; display: flex; align-items: center; gap: 10px;
+  transition: border-color .2s, color .2s, background .2s; cursor: default;
+}
+.area-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,255,157,.03); }
+.dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent); flex-shrink:0; }
+
+/* LINKS */
+.links-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.ext-link {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim); text-decoration: none;
+  border: 1px solid var(--border); padding: 8px 18px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.ext-link:hover { color: var(--accent2); border-color: var(--accent2); background: rgba(0,200,255,.04); }
+.ext-link svg { width:13px; height:13px; fill:currentColor; flex-shrink:0; }
+
+/* BLOG */
+.blog-wrap { padding: 56px 0 64px; }
+
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.fbtn {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim);
+  background: transparent; border: 1px solid var(--border);
+  padding: 7px 18px; cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.fbtn:hover, .fbtn.on { color: var(--accent); border-color: var(--accent); background: rgba(0,255,157,.04); }
+
+.year-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 5px;
+  color: var(--dim); text-transform: uppercase;
+  margin: 40px 0 12px; display: flex; align-items: center; gap: 14px;
+}
+.year-label:first-child { margin-top: 0; }
+.year-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+.post-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+
+.post-item {
+  border: 1px solid var(--border); background: var(--surface);
+  position: relative; overflow: hidden;
+  transition: border-color .2s, background .2s;
+}
+.post-item::before {
+  content: ''; position: absolute; left:0; top:0; bottom:0; width:2px;
+  background: var(--accent); transform: scaleY(0); transition: transform .25s; transform-origin: bottom;
+}
+.post-item:hover { border-color: rgba(0,255,157,.28); background: rgba(0,255,157,.02); }
+.post-item:hover::before { transform: scaleY(1); }
+
+.post-link {
+  display: block; padding: 18px 48px 18px 22px;
+  text-decoration: none; color: inherit;
+}
+
+.post-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+
+.ptype {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 2px 8px; border: 1px solid;
+}
+.ptype.writeup     { color:var(--accent);  border-color:rgba(0,255,157,.3);  background:rgba(0,255,157,.06); }
+.ptype.vulnweblabs { color:var(--accent2); border-color:rgba(0,200,255,.3);  background:rgba(0,200,255,.06); }
+
+.pdate { font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px; }
+
+.ptitle {
+  font-family: var(--head); font-size:17px; font-weight:600;
+  color: var(--text); line-height:1.4; margin-bottom:6px; transition: color .2s;
+}
+.post-item:hover .ptitle { color: var(--accent); }
+
+.psummary {
+  font-size:17px; color:var(--dim); line-height:1.6;
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+}
+
+.ptags { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; color:var(--dim); letter-spacing: 2px;}
+
+.parrow {
+  position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  font-family:var(--mono); font-size:16px; color:var(--dim);
+  opacity:0; transition:opacity .2s, right .2s, color .2s;
+}
+.post-item:hover .parrow { opacity:1; color:var(--accent); right:14px; }
+
+.no-posts { font-family:var(--mono); font-size:12px; color:var(--dim); padding:24px 0; }
+
+/* FOOTER */
+footer {
+  border-top:1px solid var(--border); padding:24px; text-align:center;
+  font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--dim);
+}
+.acc { color: var(--accent); }
+
+@media(max-width:580px){
+  .logo-text, .logo-text::before, .logo-text::after { font-size:26px; letter-spacing:6px; }
+  .logo-cursor { font-size:26px; }
+  .hex-svg { width:52px; height:52px; }
+  nav a { padding:12px 20px; letter-spacing:2px; }
+  .areas-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-wrap">
+    <svg class="hex-svg left" viewBox="0 0 100 100" fill="none">
+      <polygon points="50,4 94,28 94,72 50,96 6,72 6,28" stroke="#00ff9d" stroke-width="1" fill="none"/>
+      <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" stroke="#00ff9d" stroke-width=".5" fill="none"/>
+      <circle cx="50" cy="4"  r="2.5" fill="#00ff9d"/>
+      <circle cx="94" cy="28" r="2.5" fill="#00ff9d"/>
+      <circle cx="94" cy="72" r="2.5" fill="#00ff9d"/>
+      <circle cx="50" cy="96" r="2.5" fill="#00ff9d"/>
+      <circle cx="6"  cy="72" r="2.5" fill="#00ff9d"/>
+      <circle cx="6"  cy="28" r="2.5" fill="#00ff9d"/>
+    </svg>
+
+    <div class="logo-core">
+      <div><span class="logo-text" data-text="S3R4FH">S3R4FH</span><span class="logo-cursor">_</span></div>
+      <div class="logo-sub">[Student // security researcher // ctf player ]</div>
+    </div>
+
+    <svg class="hex-svg right" viewBox="0 0 100 100" fill="none">
+      <polygon points="50,4 94,28 94,72 50,96 6,72 6,28" stroke="#00c8ff" stroke-width="1" fill="none"/>
+      <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" stroke="#00c8ff" stroke-width=".5" fill="none"/>
+      <circle cx="50" cy="4"  r="2.5" fill="#00c8ff"/>
+      <circle cx="94" cy="28" r="2.5" fill="#00c8ff"/>
+      <circle cx="94" cy="72" r="2.5" fill="#00c8ff"/>
+      <circle cx="50" cy="96" r="2.5" fill="#00c8ff"/>
+      <circle cx="6"  cy="72" r="2.5" fill="#00c8ff"/>
+      <circle cx="6"  cy="28" r="2.5" fill="#00c8ff"/>
+    </svg>
+  </div>
+
+  <nav>
+    <a id="nav-home" href="javascript:void(0)" class="active" onclick="showPage('home')">~/home</a>
+    <a id="nav-blog" href="javascript:void(0)"             onclick="showPage('blog')">~/blog</a>
+  </nav>
+</header>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="container">
+    <div class="home-wrap">
+
+      <div class="prompt">
+        <span class="p-user">s3r4fh</span><span style="color:var(--dim)">@</span><span class="p-host">kali</span><span class="p-path">&nbsp;:~$&nbsp;</span><span style="color:var(--mid)">cat about.txt</span><span class="p-cur"></span>
+      </div>
+
+      <div class="sec-label">about</div>
+      <p class="about-text">
+        Hey — I'm <strong>S3R4FH</strong>, a student and security enthusiast focused on
+        <span class="hl">offensive security</span> and <span class="hl">vulnerability research</span>.
+        I play CTFs, build intentionally vulnerable labs to sharpen skills, and document
+        everything I learn along the way. This is where my notes live — writeups, labs, and experiments.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="sec-label">ctf interest areas</div>
+      <div class="areas-grid">
+        <div class="area-tag"><span class="dot"></span>Web Exploitation</div>
+        <div class="area-tag"><span class="dot"></span>Digital Forensics</div>
+        <div class="area-tag"><span class="dot"></span>Network Analysis</div>
+        <div class="area-tag"><span class="dot"></span>AI Security</div>
+        <div class="area-tag"><span class="dot"></span>Blockchain Security</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sec-label">find me</div>
+      <div class="links-row">
+        <a class="ext-link" href="https://github.com/S3R4-H" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a class="ext-link" href="https://discord.com/users/1368295816556581014" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          Discord
+        </a>
+        <a class="ext-link" href="mailto:seraphta04@gmail.com">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BLOG PAGE -->
+<div id="page-blog" class="page">
+  <div class="container">
+    <div class="blog-wrap">
+
+      <div class="prompt">
+        <span class="p-user">s3r4fh</span><span style="color:var(--dim)">@</span><span class="p-host">kali</span><span class="p-path">&nbsp;:~/blog$&nbsp;</span><span style="color:var(--mid)">ls -la</span><span class="p-cur"></span>
+      </div>
+
+      <div class="sec-label">posts &amp; writeups</div>
+
+      <div class="filter-bar">
+        <button class="fbtn on"  onclick="filterPosts('all',this)">all</button>
+        <button class="fbtn"     onclick="filterPosts('writeup',this)">writeups</button>
+        <button class="fbtn"     onclick="filterPosts('vulnweblabs',this)">vuln web labs</button>
+      </div>
+
+      <div id="posts-out"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="acc">S3R4FH</span> &nbsp;//&nbsp; security research &amp; ctf notes &nbsp;//&nbsp; <span class="acc" id="yr"></span>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── POSTS DATA ─────────────────────────────────────────────────────────
+
+var POSTS = [
+  {
+    type: 'writeup',
+    date: '2026-03-21',
+    title: 'BSidesSF 2026 — Writeups',
+    summary: 'It covers web, forensics and blockchains',
+    tags: ['#BSidesSF2026  #web'],
+    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/BSidesSF'
+  },
+  {
+    type: 'writeup',
+    date: '2026-03-09',
+    title: 'PicoCTF 2026 — Writeups',
+    summary: 'It covers web, forensics and blockchains',
+    tags: ['#web  #picoctf2026  #forensics  #blockchains'],
+    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/PicoCTF2026'
+  },
+  {
+    type: 'writeup',
+    date: '2026-02-21',
+    title: 'THJCC 2026 - Writeups',
+    summary: 'This is my first writeup and it is mostly web.',
+    tags: ['#web  #thjcc-2026'],
+    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/THJCC_CTF_2026'
+  }
+];
+
+// 2. CORE FUNCTIONS (Defined globally so HTML can see them)
+function showPage(name) {
+  console.log("Switching to page:", name); // Debugging line
+  
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  // Deactivate all nav links
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+
+  // Show target page
+  const targetPage = document.getElementById('page-' + name);
+  const targetNav = document.getElementById('nav-' + name);
+
+  if (targetPage) {
+    targetPage.style.display = 'block';
+  }
+  if (targetNav) {
+    targetNav.classList.add('active');
+  }
+
+  if (name === 'blog') {
+    renderPosts('all');
+  }
+  window.scrollTo(0,0);
+}
+
+function renderPosts(filter) {
+  const out = document.getElementById('posts-out');
+  if (!out) return;
+  out.innerHTML = '';
+
+  const list = filter === 'all' ? POSTS : POSTS.filter(p => p.type === filter);
+  if (!list.length) {
+    out.innerHTML = '<p class="no-posts">// no posts found</p>';
+    return;
+  }
+
+  // Simple render logic
+  list.forEach(p => {
+    const li = document.createElement('div');
+    li.className = 'post-item';
+    li.innerHTML = `
+      <a class="post-link" href="${p.url}">
+        <div class="post-meta"><span class="ptype ${p.type}">${p.type}</span></div>
+        <div class="pdate">${p.date}</div>
+        <div class="ptitle">${p.title}</div>
+        <div class="psummary">${p.summary}</div>
+        <div class="ptags">${p.tags}</div>
+
+      </a>`;
+    out.appendChild(li);
+  });
+}
+
+function filterPosts(type, btn) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPosts(type);
+}
+
+// 3. INITIALIZATION
+window.onload = () => {
+  const yr = document.getElementById('yr');
+  if (yr) yr.textContent = new Date().getFullYear();
+  showPage('home');
+};
+</script>
+</body>
+</html>
