@@ -1,4 +1,4 @@
-# 🛡️ S3R4FH — Security Research Portfolio
+# 🛡️ S3R4FH - Security Research Portfolio
 
 This repository contains the source code for my personal security portfolio and blog. Visit at (https://s3r4-h.github.io/)
 
