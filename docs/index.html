@@ -391,7 +391,7 @@ footer {
       <div class="filter-bar">
         <button class="fbtn on"  onclick="filterPosts('all',this)">all</button>
         <button class="fbtn"     onclick="filterPosts('writeup',this)">writeups</button>
-        <button class="fbtn"     onclick="filterPosts('vulnweblabs',this)">vuln web labs</button>
+        <button class="fbtn"     onclick="filterPosts('vulnweblabs',this)">labs</button>
       </div>
 
       <div id="posts-out"></div>
@@ -409,6 +409,14 @@ footer {
 // ── POSTS DATA ─────────────────────────────────────────────────────────
 
 var POSTS = [
+   {
+    type: 'writeup',
+    date: '2026-05-01',
+    title: 'kubstu ctf 2026 - Writeups',
+    summary: 'Forensics and Stego',
+    tags: ['#forensics  #stego'],
+    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/kubstuCTF2026'
+  },
   {
     type: 'writeup',
     date: '2026-03-21',
