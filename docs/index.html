@@ -1,510 +1,2179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S3R4FH</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Inconsolata:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:      #050508;
-  --surface: #0d0d14;
-  --border:  #1a1a28;
-  --accent:  #00ff9d;
-  --accent2: #00c8ff;
-  --accent3: #ff3e6c;
-  --text:    #c8d0e0;
-  --dim:     #4a5068;
-  --mid:     #7a8498;
-  --mono:    'Share Tech Mono', monospace;
-  --body:    'Inconsolata', monospace;
-  --head:    'Rajdhani', sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S3R4FH | Security Researcher & CTF Writeups</title>
+  <meta name="description" content="Personal site and CTF writeups portfolio of S3R4FH. Security research, offensive security, and web/blockchain hacking notes.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  
+  <!-- Highlight.js Code Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  
+  <style>
+    :root {
+      --bg: #18181b;           /* Neutral Dark Grey */
+      --bg-sidebar: #0f0f11;   /* Darker Sidebar Grey */
+      --surface: #202024;      /* Card/Surface Grey */
+      --surface-hover: #2d2d34;
+      --border: #2a2a30;
+      --border-accent: rgba(0, 255, 157, 0.2);
+      
+      --accent: #00ff9d;       /* Neon Green */
+      --accent-glow: rgba(0, 255, 157, 0.15);
+      --accent-dim: #00cc7d;
+      
+      --accent2: #00c8ff;      /* Cyan */
+      --accent2-glow: rgba(0, 200, 255, 0.15);
+      
+      --accent3: #ff3e6c;      /* Pink/Red */
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --font-brand: 'Rajdhani', sans-serif;
+      
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+    /* Light Mode Overrides */
+    body.light-mode {
+      --bg: #f8fafc;
+      --bg-sidebar: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --border-accent: rgba(0, 204, 125, 0.2);
+      
+      --accent: #00a86b;       /* Darker green for contrast */
+      --accent-glow: rgba(0, 168, 107, 0.1);
+      --accent-dim: #008f5a;
+      
+      --accent2: #0284c7;      /* Darker cyan */
+      --accent2-glow: rgba(2, 132, 199, 0.1);
+      
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.75;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
-  pointer-events: none;
-  z-index: 9999;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* LOGO */
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  padding: 52px 24px 28px;
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      transition: background 0.3s, color 0.3s;
+    }
 
-.hex-svg { width: 80px; height: 80px; opacity: 0.18; flex-shrink: 0; }
-.hex-svg.left  { animation: rotSlow 22s linear infinite; }
-.hex-svg.right { animation: rotSlow 16s linear infinite reverse; }
-@keyframes rotSlow { to { transform: rotate(360deg); } }
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-dim);
+    }
 
-.logo-core { text-align: center; }
+    /* Layout */
+    .app-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+    }
 
-.logo-text {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 38px;
-  letter-spacing: 10px;
-  color: var(--accent);
-  position: relative;
-  animation: glow 3s ease-in-out infinite, flicker 9s linear infinite;
-}
-@keyframes glow {
-  0%,100% { text-shadow: 0 0 6px var(--accent), 0 0 22px rgba(0,255,157,.25); }
-  50%      { text-shadow: 0 0 14px var(--accent), 0 0 50px rgba(0,255,157,.4); }
-}
-@keyframes flicker {
-  0%,98%,100% { opacity:1; } 99% { opacity:.55; }
-}
+    /* LEFT SIDEBAR */
+    aside {
+      width: 280px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 40px 24px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 0.3s ease, var(--transition);
+    }
 
-.logo-text::before,
-.logo-text::after {
-  content: attr(data-text);
-  position: absolute; left: 0; top: 0;
-  font-family: var(--mono); font-size: 38px; letter-spacing: 10px;
-  width: 100%; pointer-events: none;
-}
-.logo-text::before { color: var(--accent3); animation: glA 7s infinite; text-shadow: none; }
-.logo-text::after  { color: var(--accent2); animation: glB 7s infinite; text-shadow: none; }
+    .profile-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-@keyframes glA {
-  0%,93%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
-  94% { clip-path: inset(25% 0 55% 0); transform: translate(-5px,1px); }
-  96% { clip-path: inset(60% 0 20% 0); transform: translate(5px,-1px); }
-  98% { clip-path: inset(75% 0 5%  0); transform: translate(-2px,2px); }
-}
-@keyframes glB {
-  0%,92%,100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
-  93% { clip-path: inset(45% 0 35% 0); transform: translate(5px,-1px); }
-  95% { clip-path: inset(10% 0 75% 0); transform: translate(-5px,1px); }
-  97% { clip-path: inset(80% 0 5%  0); transform: translate(3px,0); }
-}
+    .avatar-container {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      border: 2px solid var(--border);
+      padding: 6px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      cursor: pointer;
+    }
 
-.logo-cursor {
-  font-family: var(--mono); font-size: 38px; color: var(--accent);
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    .avatar-overlay {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      opacity: 0;
+      transition: var(--transition);
+      pointer-events: none;
+    }
 
-.logo-sub {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
-  color: var(--dim); margin-top: 8px; text-transform: uppercase;
-}
+    .avatar-container:hover .avatar-overlay {
+      opacity: 1;
+    }
 
-/* NAV */
-nav {
-  display: flex; justify-content: center;
-  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  background: rgba(5,5,8,.92); backdrop-filter: blur(12px);
-  position: sticky; top: 0; z-index: 500;
-}
-nav a {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--dim); text-decoration: none;
-  padding: 14px 36px; border-right: 1px solid var(--border);
-  transition: color .2s, background .2s; position: relative;
-}
-nav a:first-child { border-left: 1px solid var(--border); }
-nav a::after {
-  content: ''; position: absolute; bottom: 0; left: 0;
-  width: 100%; height: 2px; background: var(--accent);
-  transform: scaleX(0); transition: transform .2s;
-}
-nav a:hover        { color: var(--accent); background: rgba(0,255,157,.03); }
-nav a.active       { color: var(--accent); }
-nav a.active::after, nav a:hover::after { transform: scaleX(1); }
+    .avatar-container:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
 
-/* PAGES */
-.page { display: none; }
-.page.active { display: block; }
+    .avatar-container img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
 
-.container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    /* Placeholder style if no image exists */
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 32px;
+      font-family: var(--font-mono);
+      transition: var(--transition);
+    }
 
-/* SECTION LABEL */
-.sec-label {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 4px;
-  color: var(--accent); text-transform: uppercase;
-  margin-bottom: 18px; display: flex; align-items: center; gap: 14px;
-}
-.sec-label::after {
-  content: ''; flex: 1; height: 1px;
-  background: linear-gradient(to right, var(--border), transparent);
-}
+    .avatar-container:hover .avatar-placeholder {
+      color: var(--accent);
+    }
 
-/* PROMPT */
-.prompt {
-  font-family: var(--mono); font-size: 12px; color: var(--dim);
-  margin-bottom: 36px; display: flex; align-items: center; flex-wrap: wrap;
-}
-.p-user { color: var(--accent); }
-.p-host { color: var(--accent2); }
-.p-path { color: var(--mid); }
-.p-cur  {
-  display: inline-block; width: 8px; height: 13px;
-  background: var(--accent); margin-left: 4px; vertical-align: middle;
-  animation: blink 1s step-end infinite;
-}
+    .profile-title {
+      font-family: var(--font-brand);
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--text);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
 
-/* HOME */
-.home-wrap { padding: 56px 0 64px; }
+    body:not(.light-mode) .profile-title:hover {
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--accent-glow);
+    }
 
-.about-text { font-size: 15px; color: var(--mid); line-height: 1.85; max-width: 600px; }
-.about-text strong { color: var(--text); }
-.about-text .hl { color: var(--accent); font-family: var(--mono); }
+    /* Navigation */
+    nav {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-.divider { border: none; border-top: 1px solid var(--border); margin: 44px 0; }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-decoration: none;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
 
-/* AREAS */
-.areas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
-  gap: 8px;
-}
-.area-tag {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
-  color: var(--mid); background: var(--surface); border: 1px solid var(--border);
-  padding: 9px 14px; display: flex; align-items: center; gap: 10px;
-  transition: border-color .2s, color .2s, background .2s; cursor: default;
-}
-.area-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,255,157,.03); }
-.dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent); flex-shrink:0; }
+    nav a i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      transition: var(--transition);
+    }
 
-/* LINKS */
-.links-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.ext-link {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--dim); text-decoration: none;
-  border: 1px solid var(--border); padding: 8px 18px;
-  display: inline-flex; align-items: center; gap: 8px;
-  transition: color .2s, border-color .2s, background .2s;
-}
-.ext-link:hover { color: var(--accent2); border-color: var(--accent2); background: rgba(0,200,255,.04); }
-.ext-link svg { width:13px; height:13px; fill:currentColor; flex-shrink:0; }
+    nav a:hover {
+      color: var(--accent);
+      background: var(--surface);
+      border-color: var(--border);
+    }
 
-/* BLOG */
-.blog-wrap { padding: 56px 0 64px; }
+    nav a.active {
+      color: var(--accent);
+      background: var(--surface);
+      border-color: var(--border-accent);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
 
-.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
-.fbtn {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--dim);
-  background: transparent; border: 1px solid var(--border);
-  padding: 7px 18px; cursor: pointer;
-  transition: color .2s, border-color .2s, background .2s;
-}
-.fbtn:hover, .fbtn.on { color: var(--accent); border-color: var(--accent); background: rgba(0,255,157,.04); }
+    nav a.active i {
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent-glow);
+    }
 
-.year-label {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 5px;
-  color: var(--dim); text-transform: uppercase;
-  margin: 40px 0 12px; display: flex; align-items: center; gap: 14px;
-}
-.year-label:first-child { margin-top: 0; }
-.year-label::after { content:''; flex:1; height:1px; background: var(--border); }
+    /* Sidebar Footer Options */
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
 
-.post-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
 
-.post-item {
-  border: 1px solid var(--border); background: var(--surface);
-  position: relative; overflow: hidden;
-  transition: border-color .2s, background .2s;
-}
-.post-item::before {
-  content: ''; position: absolute; left:0; top:0; bottom:0; width:2px;
-  background: var(--accent); transform: scaleY(0); transition: transform .25s; transform-origin: bottom;
-}
-.post-item:hover { border-color: rgba(0,255,157,.28); background: rgba(0,255,157,.02); }
-.post-item:hover::before { transform: scaleY(1); }
+    .social-links a {
+      color: var(--text-dim);
+      font-size: 18px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
 
-.post-link {
-  display: block; padding: 18px 48px 18px 22px;
-  text-decoration: none; color: inherit;
-}
+    .social-links a:hover {
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
 
-.post-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+    .theme-toggle-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
 
-.ptype {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
-  text-transform: uppercase; padding: 2px 8px; border: 1px solid;
-}
-.ptype.writeup     { color:var(--accent);  border-color:rgba(0,255,157,.3);  background:rgba(0,255,157,.06); }
-.ptype.vulnweblabs { color:var(--accent2); border-color:rgba(0,200,255,.3);  background:rgba(0,200,255,.06); }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
 
-.pdate { font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px; }
+    /* MAIN CONTENT */
+    main {
+      flex: 1;
+      margin-left: 280px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: margin-left 0.3s ease;
+    }
 
-.ptitle {
-  font-family: var(--head); font-size:17px; font-weight:600;
-  color: var(--text); line-height:1.4; margin-bottom:6px; transition: color .2s;
-}
-.post-item:hover .ptitle { color: var(--accent); }
+    /* Top Bar & Search */
+    .top-bar {
+      height: 70px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: sticky;
+      top: 0;
+      background: rgba(24, 24, 27, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 90;
+      transition: var(--transition);
+    }
 
-.psummary {
-  font-size:17px; color:var(--dim); line-height:1.6;
-  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-}
+    body.light-mode .top-bar {
+      background: rgba(248, 250, 252, 0.85);
+    }
 
-.ptags { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; color:var(--dim); letter-spacing: 2px;}
+    .breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-.parrow {
-  position:absolute; right:18px; top:50%; transform:translateY(-50%);
-  font-family:var(--mono); font-size:16px; color:var(--dim);
-  opacity:0; transition:opacity .2s, right .2s, color .2s;
-}
-.post-item:hover .parrow { opacity:1; color:var(--accent); right:14px; }
+    .breadcrumb .user {
+      color: var(--accent);
+    }
 
-.no-posts { font-family:var(--mono); font-size:12px; color:var(--dim); padding:24px 0; }
+    .breadcrumb .host {
+      color: var(--accent2);
+    }
 
-/* FOOTER */
-footer {
-  border-top:1px solid var(--border); padding:24px; text-align:center;
-  font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--dim);
-}
-.acc { color: var(--accent); }
+    .breadcrumb .path {
+      color: var(--text-muted);
+    }
 
-@media(max-width:580px){
-  .logo-text, .logo-text::before, .logo-text::after { font-size:26px; letter-spacing:6px; }
-  .logo-cursor { font-size:26px; }
-  .hex-svg { width:52px; height:52px; }
-  nav a { padding:12px 20px; letter-spacing:2px; }
-  .areas-grid { grid-template-columns:1fr 1fr; }
-}
-</style>
+    .search-wrapper {
+      position: relative;
+      width: 320px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 16px 8px 40px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .search-input:focus + i {
+      color: var(--accent);
+    }
+
+    /* Content Views */
+    .content-view {
+      padding: 40px;
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .content-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-title {
+      font-family: var(--font-brand);
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .view-title i {
+      color: var(--accent);
+    }
+
+    /* HOME VIEW: Post Cards */
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: var(--transition);
+      transform-origin: bottom;
+    }
+
+    .post-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .post-card:hover::before {
+      transform: scaleY(1);
+    }
+
+    .post-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .badge-type {
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .badge-type.writeup {
+      background: rgba(0, 255, 157, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 255, 157, 0.2);
+    }
+
+    .badge-type.project {
+      background: rgba(0, 200, 255, 0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(0, 200, 255, 0.2);
+    }
+
+    .post-event {
+      color: var(--accent2);
+      font-weight: 500;
+    }
+
+    .post-date {
+      color: var(--text-dim);
+    }
+
+    .post-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      transition: var(--transition);
+    }
+
+    .post-card:hover .post-card-title {
+      color: var(--accent);
+    }
+
+    .post-card-summary {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .post-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 2px 10px;
+      border-radius: 12px;
+      transition: var(--transition);
+    }
+
+    .post-card:hover .tag-pill {
+      border-color: var(--text-dim);
+      color: var(--text-muted);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    /* CATEGORIES VIEW */
+    .category-tree {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .category-node {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .category-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .category-header:hover {
+      background: var(--surface-hover);
+      color: var(--accent);
+    }
+
+    .category-header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+    }
+
+    .category-header-title i {
+      color: var(--text-dim);
+      transition: var(--transition);
+    }
+
+    .category-header:hover .category-header-title i {
+      color: var(--accent);
+    }
+
+    .category-header-count {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .category-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background: var(--bg-sidebar);
+      border-top: 1px solid transparent;
+    }
+
+    .category-node.open .category-content {
+      max-height: 1000px;
+      border-color: var(--border);
+    }
+
+    .category-node.open .category-header-title i.fa-folder {
+      color: var(--accent);
+    }
+
+    .category-node.open .category-header-title i.chevron {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+
+    .subcategory-list {
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .subcategory-item {
+      border-left: 2px solid var(--border);
+      padding-left: 16px;
+    }
+
+    .subcategory-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subcategory-title:hover {
+      color: var(--accent2);
+    }
+
+    .subcategory-posts {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+      padding-left: 12px;
+    }
+
+    .category-post-link {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-post-link:hover {
+      color: var(--accent);
+      background: var(--surface);
+    }
+
+    .category-post-link .date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* TAGS VIEW */
+    .tags-cloud-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cloud-tag {
+      font-family: var(--font-mono);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cloud-tag span {
+      font-size: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+    }
+
+    .cloud-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      transform: scale(1.05);
+    }
+
+    /* ABOUT VIEW */
+    .about-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .about-prompt {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+    }
+
+    .about-prompt .prompt-cmd {
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .about-prompt-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--accent);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+
+    .about-text-content {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .about-text-content strong {
+      color: var(--text);
+    }
+
+    .about-text-content .highlight {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: var(--border);
+      width: 100%;
+    }
+
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .interest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .interest-card:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 255, 157, 0.02);
+      transform: translateY(-1px);
+    }
+
+    .interest-card .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    /* READER VIEW */
+    .reader-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .back-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .reader-meta-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* Loading Spinner */
+    .reader-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 0;
+      gap: 16px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error Display */
+    .reader-error {
+      background: rgba(255, 62, 108, 0.05);
+      border: 1px solid rgba(255, 62, 108, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      color: #ff4d7a;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reader-error a {
+      color: var(--accent2);
+      text-decoration: underline;
+    }
+
+    /* Markdown Rendered Content Styles */
+    .markdown-body {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.8;
+      font-family: var(--font-sans);
+    }
+
+    .markdown-body h1, 
+    .markdown-body h2, 
+    .markdown-body h3, 
+    .markdown-body h4 {
+      color: var(--text);
+      font-family: var(--font-brand);
+      margin-top: 32px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .markdown-body h1 {
+      font-size: 26px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .markdown-body h2 {
+      font-size: 22px;
+    }
+
+    .markdown-body h3 {
+      font-size: 18px;
+    }
+
+    .markdown-body p {
+      margin-bottom: 16px;
+    }
+
+    .markdown-body a {
+      color: var(--accent2);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: var(--transition);
+    }
+
+    .markdown-body a:hover {
+      border-color: var(--accent2);
+    }
+
+    .markdown-body code {
+      font-family: var(--font-mono);
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    .markdown-body pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+      font-size: 13px;
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--accent);
+      background: var(--bg-sidebar);
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      border-radius: 0 8px 8px 0;
+      color: var(--text-muted);
+    }
+
+    .markdown-body ul, 
+    .markdown-body ol {
+      margin-bottom: 20px;
+      padding-left: 24px;
+    }
+
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+
+    .markdown-body img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 20px auto;
+      display: block;
+    }
+
+    /* Footer styling */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: auto;
+      transition: var(--transition);
+    }
+
+    footer span.highlight {
+      color: var(--accent);
+    }
+
+    /* Mobile Hamburger Menu */
+    .mobile-header {
+      display: none;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 110;
+      padding: 0 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-logo {
+      font-family: var(--font-brand);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+
+    .mobile-menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 95;
+    }
+
+    /* RESPONSIVENESS */
+    @media (max-width: 900px) {
+      aside {
+        transform: translateX(-100%);
+      }
+      
+      aside.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      main {
+        margin-left: 0;
+        padding-top: 60px; /* offset for mobile top bar */
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .top-bar {
+        position: static;
+        height: auto;
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .search-wrapper {
+        width: 100%;
+      }
+
+      .content-view {
+        padding: 24px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="logo-wrap">
-    <svg class="hex-svg left" viewBox="0 0 100 100" fill="none">
-      <polygon points="50,4 94,28 94,72 50,96 6,72 6,28" stroke="#00ff9d" stroke-width="1" fill="none"/>
-      <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" stroke="#00ff9d" stroke-width=".5" fill="none"/>
-      <circle cx="50" cy="4"  r="2.5" fill="#00ff9d"/>
-      <circle cx="94" cy="28" r="2.5" fill="#00ff9d"/>
-      <circle cx="94" cy="72" r="2.5" fill="#00ff9d"/>
-      <circle cx="50" cy="96" r="2.5" fill="#00ff9d"/>
-      <circle cx="6"  cy="72" r="2.5" fill="#00ff9d"/>
-      <circle cx="6"  cy="28" r="2.5" fill="#00ff9d"/>
-    </svg>
-
-    <div class="logo-core">
-      <div><span class="logo-text" data-text="S3R4FH">S3R4FH</span><span class="logo-cursor">_</span></div>
-      <div class="logo-sub">[Student // security researcher // ctf player ]</div>
-    </div>
-
-    <svg class="hex-svg right" viewBox="0 0 100 100" fill="none">
-      <polygon points="50,4 94,28 94,72 50,96 6,72 6,28" stroke="#00c8ff" stroke-width="1" fill="none"/>
-      <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" stroke="#00c8ff" stroke-width=".5" fill="none"/>
-      <circle cx="50" cy="4"  r="2.5" fill="#00c8ff"/>
-      <circle cx="94" cy="28" r="2.5" fill="#00c8ff"/>
-      <circle cx="94" cy="72" r="2.5" fill="#00c8ff"/>
-      <circle cx="50" cy="96" r="2.5" fill="#00c8ff"/>
-      <circle cx="6"  cy="72" r="2.5" fill="#00c8ff"/>
-      <circle cx="6"  cy="28" r="2.5" fill="#00c8ff"/>
-    </svg>
+  <!-- Mobile Top Navigation Header -->
+  <div class="mobile-header">
+    <div class="mobile-logo">S3R4FH</div>
+    <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
   </div>
 
-  <nav>
-    <a id="nav-home" href="javascript:void(0)" class="active" onclick="showPage('home')">~/home</a>
-    <a id="nav-blog" href="javascript:void(0)"             onclick="showPage('blog')">~/blog</a>
-  </nav>
-</header>
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<!-- HOME PAGE -->
-<div id="page-home" class="page active">
-  <div class="container">
-    <div class="home-wrap">
-
-      <div class="prompt">
-        <span class="p-user">s3r4fh</span><span style="color:var(--dim)">@</span><span class="p-host">s3ra-h</span><span class="p-path">&nbsp;:~$&nbsp;</span><span style="color:var(--mid)">cat about.txt</span><span class="p-cur"></span>
+  <div class="app-container">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside id="app-sidebar">
+      <div class="profile-section">
+        <div class="avatar-container" onclick="document.getElementById('avatar-file-input').click()" title="Click to upload profile photo">
+        <!-- Local photo link for user to drop their own propic later -->
+        <img id="avatar-img" src="assets/img/avatar.jpg" alt="avatar" onerror="this.style.display='none'; document.getElementById('avatar-placeholder').style.display='flex';">
+        <div class="avatar-placeholder" id="avatar-placeholder" style="display: none;">
+          S
+        </div>
+        <div class="avatar-overlay">
+          <i class="fa-solid fa-camera"></i>
+        </div>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+      </div>
+        
+        <div class="profile-title">S3R4FH</div>
       </div>
 
-      <div class="sec-label">about</div>
-      <p class="about-text">
-        Hello, I'm <strong>S3R4FH</strong>
-      </p>
+      <nav>
+        <a id="nav-home" href="javascript:void(0)" class="active" onclick="switchTab('home')">
+          <i class="fa-solid fa-house"></i> ~/home
+        </a>
+        <a id="nav-categories" href="javascript:void(0)" onclick="switchTab('categories')">
+          <i class="fa-solid fa-folder-tree"></i> ~/categories
+        </a>
+        <a id="nav-tags" href="javascript:void(0)" onclick="switchTab('tags')">
+          <i class="fa-solid fa-tags"></i> ~/tags
+        </a>
+        <a id="nav-about" href="javascript:void(0)" onclick="switchTab('about')">
+          <i class="fa-solid fa-terminal"></i> ~/about
+        </a>
+      </nav>
 
-      <div class="divider"></div>
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle light/dark theme">
+          <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+        </button>
+        
+        <div class="social-links">
+          <a href="https://github.com/S3R4-H" target="_blank" rel="noopener" aria-label="GitHub">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a href="https://discord.com/users/1368295816556581014" target="_blank" rel="noopener" aria-label="Discord">
+            <i class="fa-brands fa-discord"></i>
+          </a>
+          <a href="mailto:seraphta04@gmail.com" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+    </aside>
 
-      <div class="sec-label">ctf interest areas</div>
-      <div class="areas-grid">
-        <div class="area-tag"><span class="dot"></span>Web Exploitation</div>
-        <div class="area-tag"><span class="dot"></span>AI Security</div>
-        <div class="area-tag"><span class="dot"></span>Forensics</div>
-        <div class="area-tag"><span class="dot"></span>Steg</div>
-        <div class="area-tag"><span class="dot"></span>Network Analysis</div>
+    <!-- MAIN PANEL -->
+    <main>
+      <!-- Top Bar with breadcrumbs and search -->
+      <div class="top-bar">
+        <div class="breadcrumb" id="breadcrumb-path">
+          <span class="user">s3r4fh</span><span style="color:var(--text-dim)">@</span><span class="host">blog</span><span class="path"> :~/home$ </span>
+        </div>
+        <div class="search-wrapper" id="search-container">
+          <input type="text" class="search-input" id="search-box" placeholder="Search writeups/categories/tags..." aria-label="Search posts">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="sec-label">find me</div>
-      <div class="links-row">
-        <a class="ext-link" href="https://github.com/S3R4-H" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-          GitHub
-        </a>
-        <a class="ext-link" href="https://discord.com/users/1368295816556581014" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-          Discord
-        </a>
-        <a class="ext-link" href="mailto:seraphta04@gmail.com">
-          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          Email
-        </a>
+      <!-- HOME VIEW -->
+      <div id="view-home" class="content-view active">
+        <div class="posts-list" id="home-posts-list">
+          <!-- Dynamic cards inserted here -->
+        </div>
       </div>
 
-    </div>
+      <!-- CATEGORIES VIEW -->
+      <div id="view-categories" class="content-view">
+        <h1 class="view-title"><i class="fa-solid fa-folder-tree"></i> Categories</h1>
+        <div class="category-tree" id="categories-tree-container">
+          <!-- Dynamic tree accordion inserted here -->
+        </div>
+      </div>
+
+      <!-- TAGS VIEW -->
+      <div id="view-tags" class="content-view">
+        <h1 class="view-title"><i class="fa-solid fa-tags"></i> Tag Cloud</h1>
+        <div class="tags-cloud-container" id="tags-cloud-container">
+          <!-- Dynamic tags inserted here -->
+        </div>
+      </div>
+
+      <!-- ABOUT VIEW -->
+      <div id="view-about" class="content-view">
+        <h1 class="view-title"><i class="fa-solid fa-terminal"></i> About Me</h1>
+        <div class="about-wrap">
+          <div class="about-prompt">
+            <span>s3r4fh@blog:~$</span><span class="prompt-cmd">cat about.txt</span><span class="about-prompt-cursor"></span>
+          </div>
+          <div class="about-text-content" style="color: #94a3b8;">
+            Hello 👋, I'm <strong>S3R4FH</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- READER VIEW -->
+      <div id="view-reader" class="content-view">
+        <div class="reader-header">
+          <button class="back-btn" onclick="goBackFromReader()">
+            <i class="fa-solid fa-arrow-left"></i> Back
+          </button>
+          <div class="reader-meta-info" id="reader-meta">
+            <!-- Dynamic date/tags info -->
+          </div>
+        </div>
+        
+        <div id="reader-loading-spinner" class="reader-loading" style="display: none;">
+          <div class="spinner"></div>
+          <div>Syncing content from GitHub...</div>
+        </div>
+
+        <div id="reader-error-container" class="reader-error" style="display: none;">
+          <div style="font-weight: 600;"><i class="fa-solid fa-triangle-exclamation"></i> Error loading writeup</div>
+          <div id="reader-error-message">Could not fetch raw content from GitHub.</div>
+          <div style="margin-top: 10px;">
+            You can read this writeup directly on GitHub: 
+            <a href="#" id="reader-fallback-link" target="_blank" rel="noopener">Open in new tab <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </div>
+
+        <!-- Rendered HTML inserted here -->
+        <article class="markdown-body" id="reader-content-body">
+          <!-- Dynamic markdown content -->
+        </article>
+      </div>
+
+      <footer>
+        <span id="current-year"></span> . S3R4FH
+      </footer>
+    </main>
   </div>
-</div>
 
-<!-- BLOG PAGE -->
-<div id="page-blog" class="page">
-  <div class="container">
-    <div class="blog-wrap">
-
-      <div class="prompt">
-        <span class="p-user">s3r4fh</span><span style="color:var(--dim)">@</span><span class="p-host">s3r4-h</span><span class="p-path">&nbsp;:~/blog$&nbsp;</span><span style="color:var(--mid)">ls -la</span><span class="p-cur"></span>
-      </div>
-
-      <div class="sec-label">posts &amp; writeups</div>
-
-      <div class="filter-bar">
-        <button class="fbtn on"  onclick="filterPosts('all',this)">all</button>
-        <button class="fbtn"     onclick="filterPosts('writeup',this)">writeups</button>
-        <button class="fbtn"     onclick="filterPosts('vulnweblabs',this)">labs</button>
-      </div>
-
-      <div id="posts-out"></div>
-
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <span class="acc">S3R4FH</span> &nbsp;//&nbsp; security research &amp; ctf notes &nbsp;//&nbsp; <span class="acc" id="yr"></span>
-</footer>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ── POSTS DATA ─────────────────────────────────────────────────────────
-
-var POSTS = [
-   {
-    type: 'writeup',
-    date: '2026-05-01',
-    title: 'kubstu ctf 2026 - Writeups',
-    summary: 'Forensics and Stego',
-    tags: ['#forensics  #stego'],
-    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/kubstuCTF2026'
-  },
-  {
-    type: 'writeup',
-    date: '2026-03-21',
-    title: 'BSidesSF 2026 - Writeups',
-    summary: 'web',
-    tags: ['#BSidesSF2026  #web'],
-    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/BSidesSF'
-  },
-  {
-    type: 'writeup',
-    date: '2026-03-09',
-    title: 'PicoCTF 2026 - Writeups',
-    summary: 'web forensics and blockchains',
-    tags: ['#web  #picoctf2026  #forensics  #blockchains'],
-    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/PicoCTF2026'
-  },
-  {
-    type: 'writeup',
-    date: '2026-02-21',
-    title: 'THJCC 2026 - Writeups',
-    summary: 'Web - Beginner level',
-    tags: ['#web  #thjcc-2026'],
-    url: 'https://github.com/S3R4-H/ctf-writeups/tree/main/THJCC_CTF_2026'
-  }
-];
-
-function showPage(name) {
-  console.log("Switching to page:", name); // Debugging line
+  <!-- Dynamic JS Core Libraries -->
+  <!-- Marked.js Markdown Parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-  // Deactivate all nav links
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  <!-- Highlight.js Code Syntax Highlighter -->
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
 
-  // Show target page
-  const targetPage = document.getElementById('page-' + name);
-  const targetNav = document.getElementById('nav-' + name);
+  <script>
+    const POSTS = [
+      {
+        id: 'skillbit-kidnapped',
+        type: 'writeup',
+        event: 'skillbit-ctf-august-2026',
+        date: '2026-08-28',
+        title: 'Kidnapped',
+        summary: 'Web exploitation challenge solving session handling, request parameters and basic source analysis.',
+        category: ['CTF Writeups', 'skillbit-ctf-august-2026', 'web'],
+        tags: ['web', 'business-logic', 'parameter-tampering'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/skillbit-ctf-august-2026/web/Kidnapped.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/skillbit-ctf-august-2026/web/Kidnapped.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/skillbit-ctf-august-2026/web/'
+      },
+      {
+        id: 'skillbit-wheel-was-it',
+        type: 'writeup',
+        event: 'skillbit-ctf-august-2026',
+        date: '2026-08-28',
+        title: 'WHEEL WAS IT?',
+        summary: 'OSINT challenge analyzing street view views and image search results.',
+        category: ['CTF Writeups', 'skillbit-ctf-august-2026', 'osint'],
+        tags: ['osint', 'geolocation', 'search'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/skillbit-ctf-august-2026/osint/WHEEL%20WAS%20IT%3F.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/skillbit-ctf-august-2026/osint/WHEEL%20WAS%20IT%3F.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/skillbit-ctf-august-2026/osint/'
+      },
+      {
+        id: 'servus-ai',
+        type: 'project',
+        date: '2026-07-06',
+        title: 'Servus.ai — At your service',
+        summary: 'A Unified Concierge Organizer & Student Study Assistant built using the Google Agent Development Kit (ADK) and Gemini language models. Combines study document RAG, personal task organization, and Gmail synchronization.',
+        category: ['Projects', 'Hackathons'],
+        tags: ['ai-agents', 'gemini', 'fastapi', 'react', 'sqlite'],
+        url: 'https://github.com/S3R4-H/kaggle-Intensive-Vibe-Coding-Capstone-Project-2026',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/kaggle-Intensive-Vibe-Coding-Capstone-Project-2026/main/README.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/kaggle-Intensive-Vibe-Coding-Capstone-Project-2026/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/kaggle-Intensive-Vibe-Coding-Capstone-Project-2026/main/'
+      },
+      {
+        id: 'kubstu-pdf',
+        type: 'writeup',
+        event: 'kubstuCTF2026',
+        date: '2026-05-01',
+        title: 'Is the report in English?',
+        summary: 'A digital forensics writeup detailing the analysis of a suspicious financial report PDF, exploring embedded items and content validation.',
+        category: ['CTF Writeups', 'kubstuCTF2026', 'forensics'],
+        tags: ['forensics', 'pdf', 'kubstu'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/kubstuCTF2026/forensics/Is%20the%20report%20in%20English%3F.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/kubstuCTF2026/forensics/Is%20the%20report%20in%20English%3F.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/kubstuCTF2026/forensics/'
+      },
+      {
+        id: 'kubstu-stego',
+        type: 'writeup',
+        event: 'kubstuCTF2026',
+        date: '2026-05-01',
+        title: 'bembembem',
+        summary: 'A steganography challenge walkthrough using python scripts to decode hidden files and extract credentials from zip packages.',
+        category: ['CTF Writeups', 'kubstuCTF2026', 'stego'],
+        tags: ['stego', 'python', 'zip', 'kubstu'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/kubstuCTF2026/stego/bembembem.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/kubstuCTF2026/stego/bembembem.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/kubstuCTF2026/stego/'
+      },
+      {
+        id: 'bsidessf-web',
+        type: 'writeup',
+        event: 'BSidesSF',
+        date: '2026-03-21',
+        title: 'Web-tutorial1',
+        summary: 'An entry-level web exploitation challenge solving session handling, request parameters and basic source analysis.',
+        category: ['CTF Writeups', 'BSidesSF', 'web'],
+        tags: ['web', 'tutorial', 'bsidessf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/BSidesSF/web/Web-tutorial1.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/BSidesSF/web/Web-tutorial1.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/BSidesSF/'
+      },
+      {
+        id: 'pico-access',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'ACCESS CONTROL',
+        summary: 'Smart contract vulnerability writeup bypassing contract owner restrictions and modifying access control permissions.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'blockchains'],
+        tags: ['blockchains', 'smart-contracts', 'access-control', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/blockchains/ACCESS%20CONTROL.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/ACCESS%20CONTROL.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/'
+      },
+      {
+        id: 'pico-front',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Front Running',
+        summary: 'Blockchain writeup detail on exploiting the transaction pool by front-running pending transactions with higher gas fees.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'blockchains'],
+        tags: ['blockchains', 'front-running', 'ethereum', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/blockchains/Front_Running.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/Front_Running.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/'
+      },
+      {
+        id: 'pico-reentrance',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Reentrance',
+        summary: 'Walkthrough of the classic smart contract reentrancy bug, draining contract balances using recursive withdrawal calls.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'blockchains'],
+        tags: ['blockchains', 'smart-contracts', 'reentrancy', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/blockchains/Reentrance.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/Reentrance.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/'
+      },
+      {
+        id: 'pico-overflow',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Smart Overflow',
+        summary: 'Analysis of integer overflows in Solidity variables and exploiting logic errors to gain unauthorized tokens.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'blockchains'],
+        tags: ['blockchains', 'smart-contracts', 'overflow', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/blockchains/Smart_Overflow.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/Smart_Overflow.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/blockchains/'
+      },
+      {
+        id: 'pico-git',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Forensics Git0 & 1',
+        summary: 'Investigating Git directory structures, analyzing diff logs, and recovering deleted files containing CTF flags.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'forensics'],
+        tags: ['forensics', 'git', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/forensics/Forensics%20Git0%20%26%201.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/forensics/Forensics%20Git0%20%26%201.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/forensics/'
+      },
+      {
+        id: 'pico-timeline',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Timeline 0 & 1',
+        summary: 'Log forensics and system event reconstruction to trace lateral movement and identify the entrypoint of an attacker.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'forensics'],
+        tags: ['forensics', 'timeline', 'logs', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/forensics/Timeline%200%20%26%201.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/forensics/Timeline%200%20%26%201.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/forensics/'
+      },
+      {
+        id: 'pico-lockout',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Fool The Lockout',
+        summary: 'Bypassing web application lockout policies and exploiting IP-header spoofing to carry out brute-force attacks.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'web'],
+        tags: ['web', 'lockout', 'rate-limit', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/web/Fool%20The%20Lockout.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/Fool%20The%20Lockout.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/'
+      },
+      {
+        id: 'pico-2fa',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'No FA',
+        summary: 'Bypassing Two-Factor Authentication (2FA) mechanisms via race conditions or OTP brute force without account locks.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'web'],
+        tags: ['web', '2fa', 'otp', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/web/No%20FA.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/No%20FA.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/'
+      },
+      {
+        id: 'pico-race',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Order Order',
+        summary: 'Exploiting transactional order vulnerabilities in shopping carts to obtain items for free or alter server states.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'web'],
+        tags: ['web', 'race-condition', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/web/Order%20Order.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/Order%20Order.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/'
+      },
+      {
+        id: 'pico-sqli',
+        type: 'writeup',
+        event: 'PicoCTF2026',
+        date: '2026-03-09',
+        title: 'Secret Box',
+        summary: 'Solving a secure login box using SQL injection, dealing with characters blacklists and filtering blocks.',
+        category: ['CTF Writeups', 'PicoCTF2026', 'web'],
+        tags: ['web', 'sqli', 'picoctf'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/PicoCTF2026/web/Secret%20Box.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/Secret%20Box.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/'
+      },
+      {
+        id: 'thjcc-0422',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: '0422',
+        summary: 'Web exploitation covering cookie injection and SQL injection bypasses to gain administrative privilege.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'sqli', 'cookies', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/0422.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/0422.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      },
+      {
+        id: 'thjcc-old',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: 'A long time ago...',
+        summary: 'Analyzing old server configs and HTTP protocol variations to discover backup folders.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/A%20long time%20ago....md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/A%20long%20time%20ago....md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      },
+      {
+        id: 'thjcc-chat',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: 'CHAT',
+        summary: 'Exploiting a simple chat room via Cross-Site Scripting (XSS) to capture user tokens.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'chat', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/CHAT.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/CHAT.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      },
+      {
+        id: 'thjcc-ear',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: 'EAR',
+        summary: 'Exploiting Execution After Redirect (EAR) vulnerabilities on pages that load secret dashboard scripts after doing a headers redirection.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'ear', 'redirect', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/EAR.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/EAR.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      },
+      {
+        id: 'thjcc-vegas',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: 'Las Vegas',
+        summary: 'Abusing a web game interface by predicting random values and manipulating cookies.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'logic', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/Las_Vegas.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/Las_Vegas.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      },
+      {
+        id: 'thjcc-viewer',
+        type: 'writeup',
+        event: 'THJCC_CTF_2026',
+        date: '2026-02-21',
+        title: 'Secret File Viewer',
+        summary: 'Exploiting Local File Inclusion (LFI) via filter bypasses to read source codes and settings configurations.',
+        category: ['CTF Writeups', 'THJCC_CTF_2026', 'web'],
+        tags: ['web', 'lfi', 'path-traversal', 'thjcc'],
+        url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/THJCC_CTF_2026/Secret%20File%20Viewer.md',
+        rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/Secret%20File%20Viewer.md',
+        repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/THJCC_CTF_2026/'
+      }
+    ];
 
-  if (targetPage) {
-    targetPage.style.display = 'block';
-  }
-  if (targetNav) {
-    targetNav.classList.add('active');
-  }
+    // ── APPLICATION STATE ───────────────────────────────────────────────────
+    let currentTab = 'home';
+    let previousTab = 'home';
+    let searchQuery = '';
+    let selectedCategoryPath = null;
+    let selectedTag = null;
+    let activePostId = null;
 
-  if (name === 'blog') {
-    renderPosts('all');
-  }
-  window.scrollTo(0,0);
-}
+    // ── INITIALIZATION ──────────────────────────────────────────────────────
+    window.onload = () => {
+      document.getElementById('current-year').textContent = new Date().getFullYear();
+      
+      // Load saved avatar if exists
+      const savedAvatar = localStorage.getItem('user-avatar');
+      if (savedAvatar) {
+        const img = document.getElementById('avatar-img');
+        img.src = savedAvatar;
+        img.style.display = 'block';
+        document.getElementById('avatar-placeholder').style.display = 'none';
+      }
+      
+      // Setup Search Event Listener
+      const searchBox = document.getElementById('search-box');
+      searchBox.value = '';
+      searchBox.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        if (currentTab !== 'home') {
+          switchTab('home');
+        } else {
+          renderHomePosts();
+        }
+      });
 
-function renderPosts(filter) {
-  const out = document.getElementById('posts-out');
-  if (!out) return;
-  out.innerHTML = '';
+      // Mobile Menu Toggle
+      const mobileToggle = document.getElementById('mobile-menu-toggle');
+      const appSidebar = document.getElementById('app-sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-  const list = filter === 'all' ? POSTS : POSTS.filter(p => p.type === filter);
-  if (!list.length) {
-    out.innerHTML = '<p class="no-posts">// no posts found</p>';
-    return;
-  }
+      const toggleMobileMenu = () => {
+        appSidebar.classList.toggle('open');
+        sidebarOverlay.classList.toggle('open');
+      };
 
-  // render logic
-  list.forEach(p => {
-    const li = document.createElement('div');
-    li.className = 'post-item';
-    li.innerHTML = `
-      <a class="post-link" href="${p.url}">
-        <div class="post-meta"><span class="ptype ${p.type}">${p.type}</span></div>
-        <div class="pdate">${p.date}</div>
-        <div class="ptitle">${p.title}</div>
-        <div class="psummary">${p.summary}</div>
-        <div class="ptags">${p.tags}</div>
+      mobileToggle.addEventListener('click', toggleMobileMenu);
+      sidebarOverlay.addEventListener('click', toggleMobileMenu);
 
-      </a>`;
-    out.appendChild(li);
-  });
-}
+      // Bind nav links to also close mobile menu
+      document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (appSidebar.classList.contains('open')) {
+            toggleMobileMenu();
+          }
+        });
+      });
 
-function filterPosts(type, btn) {
-  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  renderPosts(type);
-}
+      // Setup Dark/Light Theme Switcher
+      setupThemeToggle();
 
-// 3. INITIALIZATION
-window.onload = () => {
-  const yr = document.getElementById('yr');
-  if (yr) yr.textContent = new Date().getFullYear();
-  showPage('home');
-};
-</script>
+      // Configure Marked.js Options
+      marked.setOptions({
+        gfm: true,
+        breaks: true,
+        headerIds: true,
+        mangle: false
+      });
+
+      // Load initial lists
+      renderHomePosts();
+      renderCategoryTree();
+      renderTagsCloud();
+    };
+
+    // ── THEME MANAGER ───────────────────────────────────────────────────────
+    function setupThemeToggle() {
+      const toggleBtn = document.getElementById('theme-toggle');
+      
+      // LocalStorage Cache check
+      const currentTheme = localStorage.getItem('theme') || 'dark';
+      if (currentTheme === 'light') {
+        document.body.classList.add('light-mode');
+        updateThemeToggleUI('light');
+      } else {
+        updateThemeToggleUI('dark');
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        updateThemeToggleUI(isLight ? 'light' : 'dark');
+      });
+    }
+
+    function updateThemeToggleUI(mode) {
+      const icon = document.querySelector('#theme-toggle i');
+      const label = document.querySelector('#theme-toggle span');
+      if (mode === 'light') {
+        icon.className = 'fa-solid fa-sun';
+        label.textContent = 'Light Mode';
+      } else {
+        icon.className = 'fa-solid fa-moon';
+        label.textContent = 'Dark Mode';
+      }
+    }
+
+    // ── NAVIGATION & SPA ROUTING ───────────────────────────────────────────
+    function switchTab(tabId) {
+      if (tabId === currentTab) return;
+      
+      // Scroll to top
+      window.scrollTo({ top: 0 });
+
+      // Clean active views
+      document.querySelectorAll('.content-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('active');
+      });
+
+      // Show new view
+      document.getElementById('view-' + tabId).classList.add('active');
+      
+      const activeNavLink = document.getElementById('nav-' + tabId);
+      if (activeNavLink) {
+        activeNavLink.classList.add('active');
+      }
+
+      // Update Breadcrumbs
+      const pathNode = document.querySelector('#breadcrumb-path .path');
+      pathNode.textContent = ` :~/${tabId}$ `;
+
+      // Update State
+      previousTab = currentTab;
+      currentTab = tabId;
+
+      // Handle specific tab activations
+      if (tabId === 'home') {
+        // Reset category/tag filter when navigating to Home explicitly
+        selectedCategoryPath = null;
+        selectedTag = null;
+        renderHomePosts();
+      }
+
+      // Clear search box focus/value if switching to static tabs
+      if (tabId !== 'home') {
+        document.getElementById('search-box').value = '';
+        searchQuery = '';
+      }
+    }
+
+    // ── SEARCH & RENDERING HOME POSTS ──────────────────────────────────────
+    function getFilteredPosts() {
+      return POSTS.filter(post => {
+        // Match Search Query
+        const matchesSearch = !searchQuery || 
+          post.title.toLowerCase().includes(searchQuery) ||
+          post.summary.toLowerCase().includes(searchQuery) ||
+          (post.event && post.event.toLowerCase().includes(searchQuery)) ||
+          post.tags.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+          post.category.some(cat => cat.toLowerCase().includes(searchQuery));
+
+        // Match Category Filter
+        let matchesCategory = true;
+        if (selectedCategoryPath) {
+          matchesCategory = selectedCategoryPath.every((catName, idx) => post.category[idx] === catName);
+        }
+
+        // Match Tag Filter
+        let matchesTag = true;
+        if (selectedTag) {
+          matchesTag = post.tags.includes(selectedTag);
+        }
+
+        return matchesSearch && matchesCategory && matchesTag;
+      });
+    }
+
+    function renderHomePosts() {
+      const container = document.getElementById('home-posts-list');
+      container.innerHTML = '';
+
+      const filtered = getFilteredPosts();
+
+      // Show Breadcrumb Filter Detail if active
+      let filterDetailsHtml = '';
+      if (selectedCategoryPath || selectedTag || searchQuery) {
+        filterDetailsHtml = `
+          <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-sidebar); padding: 10px 16px; border-radius: 6px; border: 1px dashed var(--border);">
+            <div>
+              <i class="fa-solid fa-filter"></i> Filters active: 
+              ${selectedCategoryPath ? `<span style="color: var(--accent2)">category:${selectedCategoryPath.join('/')}</span>` : ''}
+              ${selectedTag ? `${selectedCategoryPath ? ' &nbsp;' : ''}<span style="color: var(--accent)">tag:#${selectedTag}</span>` : ''}
+              ${searchQuery ? `${(selectedCategoryPath || selectedTag) ? ' &nbsp;' : ''}<span style="color: var(--accent3)">search:"${searchQuery}"</span>` : ''}
+            </div>
+            <button onclick="clearAllFilters()" style="background: none; border: none; color: var(--accent3); cursor: pointer; font-family: var(--font-mono); font-size: 11px;">
+              [Clear All]
+            </button>
+          </div>
+        `;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = filterDetailsHtml + '<div class="no-results">// no results match filters</div>';
+        return;
+      }
+
+      let html = filterDetailsHtml;
+      
+      // Sort posts by date descending
+      filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      filtered.forEach(post => {
+        const typeBadge = `<span class="badge-type ${post.type}">${post.type}</span>`;
+        const eventLabel = post.event ? `<span class="post-event">${post.event}</span>` : '';
+        const metaConnector = post.event ? ' &nbsp;&bull;&nbsp; ' : '';
+        const tagPills = post.tags.map(t => `<span class="tag-pill">#${t}</span>`).join(' ');
+
+        html += `
+          <div class="post-card" onclick="openReader('${post.id}')">
+            <div class="post-card-meta">
+              ${typeBadge}
+              ${eventLabel}
+              ${metaConnector}
+              <span class="post-date">${post.date}</span>
+            </div>
+            <div class="post-card-title">${post.title}</div>
+            <div class="post-card-summary">${post.summary}</div>
+            <div class="post-card-tags">
+              ${tagPills}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function clearAllFilters() {
+      selectedCategoryPath = null;
+      selectedTag = null;
+      searchQuery = '';
+      document.getElementById('search-box').value = '';
+      renderHomePosts();
+    }
+
+    // ── DYNAMIC CATEGORY TREE ACCORDION ────────────────────────────────────
+    function renderCategoryTree() {
+      const container = document.getElementById('categories-tree-container');
+      container.innerHTML = '';
+
+      // Build tree object structure from flat POSTS categories array
+      const tree = {};
+
+      POSTS.forEach(post => {
+        let currentLevel = tree;
+        post.category.forEach((catName, idx) => {
+          if (!currentLevel[catName]) {
+            currentLevel[catName] = {
+              _posts: [],
+              _sub: {}
+            };
+          }
+          currentLevel[catName]._posts.push(post);
+          currentLevel = currentLevel[catName]._sub;
+        });
+      });
+
+      // Renders hierarchy: Projects (Hackathons, Tools), CTF Writeups (PicoCTF, THJCC, BSidesSF, kubstuCTF)
+      let html = '';
+
+      for (const parentName in tree) {
+        const parentNode = tree[parentName];
+        const parentTotalCount = parentNode._posts.length;
+
+        // Render Parent Accordion Item
+        html += `
+          <div class="category-node" id="cat-node-${encodeURIComponent(parentName)}">
+            <div class="category-header" onclick="toggleCategoryAccordion('${encodeURIComponent(parentName)}')">
+              <div class="category-header-title">
+                <i class="fa-solid fa-chevron-right chevron"></i>
+                <i class="fa-solid fa-folder"></i>
+                <span>${parentName}</span>
+              </div>
+              <span class="category-header-count">${parentTotalCount}</span>
+            </div>
+            <div class="category-content">
+              <div class="subcategory-list">
+        `;
+
+        // Render Subcategories
+        for (const subName in parentNode._sub) {
+          const subNode = parentNode._sub[subName];
+          const subPosts = subNode._posts;
+
+          // For subcategories, check if there is an additional nested layer (e.g. PicoCTF2026 -> blockchains)
+          const hasThirdLayer = Object.keys(subNode._sub).length > 0;
+
+          if (hasThirdLayer) {
+            html += `
+              <div class="subcategory-item" style="margin-bottom: 12px;">
+                <div class="subcategory-title" onclick="filterByCategory(['${parentName}', '${subName}'])">
+                  <i class="fa-solid fa-folder-open"></i> ${subName} (${subPosts.length})
+                </div>
+                <div style="padding-left: 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 12px;">
+            `;
+
+            for (const leafName in subNode._sub) {
+              const leafNode = subNode._sub[leafName];
+              html += `
+                <div style="border-left: 1px dashed var(--border); padding-left: 12px;">
+                  <div class="subcategory-title" style="font-size:12px; color: var(--accent2);" onclick="filterByCategory(['${parentName}', '${subName}', '${leafName}'])">
+                    <i class="fa-solid fa-folder-open"></i> ${leafName} (${leafNode._posts.length})
+                  </div>
+                  <div class="subcategory-posts">
+              `;
+
+              leafNode._posts.forEach(p => {
+                html += `
+                  <a href="javascript:void(0)" class="category-post-link" onclick="openReader('${p.id}')">
+                    <span>${p.title}</span>
+                    <span class="date">${p.date}</span>
+                  </a>
+                `;
+              });
+
+              html += `</div></div>`;
+            }
+
+            html += `</div></div>`;
+
+          } else {
+            // Render basic subcategory flat layout
+            html += `
+              <div class="subcategory-item">
+                <div class="subcategory-title" onclick="filterByCategory(['${parentName}', '${subName}'])">
+                  <i class="fa-solid fa-folder-open"></i> ${subName} (${subPosts.length})
+                </div>
+                <div class="subcategory-posts">
+            `;
+
+            subPosts.forEach(p => {
+              html += `
+                <a href="javascript:void(0)" class="category-post-link" onclick="openReader('${p.id}')">
+                  <span>${p.title}</span>
+                  <span class="date">${p.date}</span>
+                </a>
+              `;
+            });
+
+            html += `
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        html += `
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function toggleCategoryAccordion(id) {
+      const node = document.getElementById('cat-node-' + id);
+      const content = node.querySelector('.category-content');
+
+      if (node.classList.contains('open')) {
+        node.classList.remove('open');
+        content.style.maxHeight = '0';
+      } else {
+        node.classList.add('open');
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    }
+
+    function filterByCategory(path) {
+      selectedCategoryPath = path;
+      selectedTag = null;
+      switchTab('home');
+    }
+
+    // ── DYNAMIC TAG CLOUD GENERATION ───────────────────────────────────────
+    function renderTagsCloud() {
+      const container = document.getElementById('tags-cloud-container');
+      container.innerHTML = '';
+
+      // Count tag occurrences
+      const tagCounts = {};
+      POSTS.forEach(post => {
+        post.tags.forEach(tag => {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+      });
+
+      // Generate cloud HTML
+      let html = '';
+      for (const tag in tagCounts) {
+        const count = tagCounts[tag];
+        // Calculate font size class or direct em size (12px to 22px)
+        const size = 11 + Math.min(count * 2.5, 12);
+        
+        let color = 'var(--text-muted)';
+        if (count > 5) color = 'var(--accent)';
+        else if (count > 2) color = 'var(--accent2)';
+
+        html += `
+          <a class="cloud-tag" onclick="filterByTag('${tag}')" style="font-size: ${size}px; color: ${color};">
+            #${tag} <span>${count}</span>
+          </a>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function filterByTag(tag) {
+      selectedTag = tag;
+      selectedCategoryPath = null;
+      switchTab('home');
+    }
+
+    // ── DYNAMIC RAW GITHUB MARKDOWN READER ─────────────────────────────────
+    function openReader(postId) {
+      const post = POSTS.find(p => p.id === postId);
+      if (!post) return;
+
+      activePostId = postId;
+      
+      // Save window scroll location to recover on back
+      post._scrollOffset = window.scrollY;
+
+      // Hide sidebar/search panel elements on mobile/top header
+      document.getElementById('search-container').style.opacity = '0';
+      document.getElementById('search-container').style.pointerEvents = 'none';
+
+      // Switch views
+      document.querySelectorAll('.content-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      const readerView = document.getElementById('view-reader');
+      readerView.classList.add('active');
+
+      // Update breadcrumbs
+      const pathNode = document.querySelector('#breadcrumb-path .path');
+      pathNode.textContent = ` :~/reader/${post.id}$ `;
+
+      // Set reader meta
+      const typeBadge = `<span class="badge-type ${post.type}">${post.type}</span>`;
+      const eventLabel = post.event ? `<span class="post-event" style="margin-left: 8px;">${post.event}</span>` : '';
+      document.getElementById('reader-meta').innerHTML = `${typeBadge} ${eventLabel} &nbsp;&bull;&nbsp; ${post.date}`;
+
+      // Reset DOM state
+      const contentBody = document.getElementById('reader-content-body');
+      contentBody.innerHTML = '';
+      document.getElementById('reader-loading-spinner').style.display = 'flex';
+      document.getElementById('reader-error-container').style.display = 'none';
+
+      // Fetch file content
+      fetch(post.rawUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(markdown => {
+          document.getElementById('reader-loading-spinner').style.display = 'none';
+          
+          // Parse markdown to HTML
+          let rawHtml = marked.parse(markdown);
+          contentBody.innerHTML = rawHtml;
+
+          // Rewrite image/scripts relative links dynamically using DOM tree
+          resolveRelativeLinks(contentBody, post);
+
+          // Trigger highlight.js code block rendering
+          contentBody.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+          });
+
+          // Scroll reader pane to top
+          window.scrollTo({ top: 0 });
+        })
+        .catch(err => {
+          console.error("Error fetching writeup:", err);
+          document.getElementById('reader-loading-spinner').style.display = 'none';
+          document.getElementById('reader-error-container').style.display = 'flex';
+          document.getElementById('reader-error-message').textContent = `Could not connect to GitHub API or file not found. Details: ${err.message}`;
+          
+          // Fallback link setting
+          const fallback = document.getElementById('reader-fallback-link');
+          fallback.href = post.url;
+        });
+    }
+
+    function resolveRelativeLinks(container, post) {
+      // 1. Resolve relative images (e.g. images/... or ../images/...)
+      container.querySelectorAll('img').forEach(img => {
+        const src = img.getAttribute('src');
+        if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+          let resolvedSrc = src;
+          
+          // Resolve relative path references
+          if (src.startsWith('../')) {
+            // E.g. ctf-writeups root folder reference
+            resolvedSrc = post.repoBaseUrl + src.replace(/^\.\.\//, '');
+          } else if (src.startsWith('./')) {
+            resolvedSrc = post.imageBaseUrl + src.replace(/^\.\//, '');
+          } else {
+            resolvedSrc = post.imageBaseUrl + src;
+          }
+          
+          // Handle URL encoding (specifically spaces, e.g. %20)
+          resolvedSrc = resolvedSrc.replace(/ /g, '%20');
+          img.src = resolvedSrc;
+        }
+      });
+
+      // 2. Resolve relative anchor file links in markdown to point directly to GitHub repo
+      container.querySelectorAll('a').forEach(anchor => {
+        const href = anchor.getAttribute('href');
+        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+          let resolvedHref = href;
+          if (href.startsWith('../')) {
+            resolvedHref = post.url.substring(0, post.url.lastIndexOf('/')) + '/../' + href;
+          } else {
+            resolvedHref = post.url.substring(0, post.url.lastIndexOf('/')) + '/' + href;
+          }
+          anchor.href = resolvedHref;
+          anchor.target = "_blank";
+          anchor.rel = "noopener noreferrer";
+        }
+      });
+    }
+
+    function goBackFromReader() {
+      // Restore top bar search input opacity
+      document.getElementById('search-container').style.opacity = '1';
+      document.getElementById('search-container').style.pointerEvents = 'all';
+
+      // Restore navigation context view
+      document.querySelectorAll('.content-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.getElementById('view-' + currentTab).classList.add('active');
+
+      // Restore path breadcrumb
+      const pathNode = document.querySelector('#breadcrumb-path .path');
+      pathNode.textContent = ` :~/${currentTab}$ `;
+
+      // Restore scroll position
+      const post = POSTS.find(p => p.id === activePostId);
+      if (post && post._scrollOffset) {
+        window.scrollTo(0, post._scrollOffset);
+      }
+      activePostId = null;
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        
+        // Save to localStorage
+        localStorage.setItem('user-avatar', dataUrl);
+        
+        // Update DOM
+        const img = document.getElementById('avatar-img');
+        img.src = dataUrl;
+        img.style.display = 'block';
+        document.getElementById('avatar-placeholder').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
 </body>
 </html>
