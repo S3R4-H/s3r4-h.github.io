@@ -1472,6 +1472,24 @@
         imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/PicoCTF2026/web/'
     ];
 
+    // ── LOCAL STORAGE RESILIENCY HELPERS ──────────────────────────────────
+    function safeGetLocalStorage(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        console.warn("localStorage read blocked by browser settings:", e);
+        return null;
+      }
+    }
+
+    function safeSetLocalStorage(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {
+        console.warn("localStorage write blocked by browser settings:", e);
+      }
+    }
+
     // ── APPLICATION STATE ───────────────────────────────────────────────────
     let currentTab = 'home';
     let previousTab = 'home';
@@ -1485,7 +1503,7 @@
       document.getElementById('current-year').textContent = new Date().getFullYear();
       
       // Load saved avatar if exists
-      const savedAvatar = localStorage.getItem('user-avatar');
+      const savedAvatar = safeGetLocalStorage('user-avatar');
       if (savedAvatar) {
         const img = document.getElementById('avatar-img');
         img.src = savedAvatar;
@@ -1541,7 +1559,7 @@
       const toggleBtn = document.getElementById('theme-toggle');
       
       // LocalStorage Cache check
-      const currentTheme = localStorage.getItem('theme') || 'dark';
+      const currentTheme = safeGetLocalStorage('theme') || 'dark';
       if (currentTheme === 'light') {
         document.body.classList.add('light-mode');
         updateThemeToggleUI('light');
@@ -1552,7 +1570,7 @@
       toggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('light-mode');
         const isLight = document.body.classList.contains('light-mode');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        safeSetLocalStorage('theme', isLight ? 'light' : 'dark');
         updateThemeToggleUI(isLight ? 'light' : 'dark');
       });
     }
@@ -2068,7 +2086,7 @@
         const dataUrl = e.target.result;
         
         // Save to localStorage
-        localStorage.setItem('user-avatar', dataUrl);
+        safeSetLocalStorage('user-avatar', dataUrl);
         
         // Update DOM
         const img = document.getElementById('avatar-img');
