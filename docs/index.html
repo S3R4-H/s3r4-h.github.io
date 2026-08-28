@@ -1413,7 +1413,7 @@
         url: 'https://github.com/S3R4-H/ctf-writeups/blob/main/BSidesSF/web/Web-tutorial1.md',
         rawUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/BSidesSF/web/Web-tutorial1.md',
         repoBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/',
-        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/BSidesSF/'
+        imageBaseUrl: 'https://raw.githubusercontent.com/S3R4-H/ctf-writeups/main/BSidesSF/web/'
       },
       {
         id: 'pico-access',
@@ -2103,8 +2103,9 @@
       document.getElementById('reader-loading-spinner').style.display = 'flex';
       document.getElementById('reader-error-container').style.display = 'none';
 
-      // Fetch file content
-      fetch(post.rawUrl)
+      // Fetch file content (append cache buster to prevent cached 404s or stale content)
+      const fetchUrl = post.rawUrl + `?cb=${Date.now()}`;
+      fetch(fetchUrl)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
