@@ -834,6 +834,55 @@
       box-shadow: 0 0 6px var(--accent);
     }
 
+    /* Attachment Link Blocks */
+    .script-link-block, .archive-link-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--accent2) !important;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      text-decoration: none;
+      margin: 16px 0;
+      transition: var(--transition);
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .script-link-block:hover, .archive-link-block:hover {
+      border-color: var(--accent2);
+      background: rgba(0, 200, 255, 0.04);
+      transform: translateY(-1px);
+    }
+
+    .script-link-block i, .archive-link-block i {
+      font-size: 20px;
+      color: var(--accent2);
+    }
+
+    .script-link-block code, .archive-link-block code {
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text);
+      border: none;
+    }
+
+    .reader-video {
+      width: 100%;
+      max-height: 480px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      background: #000;
+    }
+
     /* READER VIEW */
     .reader-header {
       display: flex;
@@ -2093,24 +2142,55 @@
     }
 
     function resolveRelativeLinks(container, post) {
-      // 1. Resolve relative images (e.g. images/... or ../images/...)
+      // 1. Resolve relative images/attachments
       container.querySelectorAll('img').forEach(img => {
         const src = img.getAttribute('src');
-        if (src && !src.startsWith('http') && !src.startsWith('data:')) {
-          let resolvedSrc = src;
-          
+        if (!src) return;
+
+        let resolvedSrc = src;
+        if (!src.startsWith('http') && !src.startsWith('data:')) {
           // Resolve relative path references
           if (src.startsWith('../')) {
-            // E.g. ctf-writeups root folder reference
             resolvedSrc = post.repoBaseUrl + src.replace(/^\.\.\//, '');
           } else if (src.startsWith('./')) {
             resolvedSrc = post.imageBaseUrl + src.replace(/^\.\//, '');
           } else {
             resolvedSrc = post.imageBaseUrl + src;
           }
-          
-          // Handle URL encoding (specifically spaces, e.g. %20)
           resolvedSrc = resolvedSrc.replace(/ /g, '%20');
+        }
+
+        const lowerSrc = src.toLowerCase();
+        const filename = src.substring(src.lastIndexOf('/') + 1);
+
+        if (lowerSrc.endsWith('.py') || lowerSrc.endsWith('.sh') || lowerSrc.endsWith('.txt') || lowerSrc.endsWith('.sol') || lowerSrc.endsWith('.c') || lowerSrc.endsWith('.cpp') || lowerSrc.endsWith('.go')) {
+          // Create code attachment viewer link
+          const link = document.createElement('a');
+          link.href = resolvedSrc;
+          link.target = '_blank';
+          link.className = 'script-link-block';
+          link.innerHTML = `<i class="fa-solid fa-file-code"></i> View Script: <code>${filename}</code>`;
+          img.replaceWith(link);
+        } else if (lowerSrc.endsWith('.mp4') || lowerSrc.endsWith('.webm') || lowerSrc.endsWith('.ogg')) {
+          // Create HTML5 video element inline
+          const video = document.createElement('video');
+          video.controls = true;
+          video.className = 'reader-video';
+          const source = document.createElement('source');
+          source.src = resolvedSrc;
+          source.type = 'video/mp4';
+          video.appendChild(source);
+          img.replaceWith(video);
+        } else if (lowerSrc.endsWith('.zip') || lowerSrc.endsWith('.tar.gz') || lowerSrc.endsWith('.rar') || lowerSrc.endsWith('.7z')) {
+          // Create archive download link
+          const link = document.createElement('a');
+          link.href = resolvedSrc;
+          link.className = 'archive-link-block';
+          link.innerHTML = `<i class="fa-solid fa-file-zipper"></i> Download Attachment: <code>${filename}</code>`;
+          link.setAttribute('download', filename);
+          img.replaceWith(link);
+        } else {
+          // Normal image asset
           img.src = resolvedSrc;
         }
       });
