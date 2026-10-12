@@ -1671,6 +1671,11 @@
           matchesTag = post.tags.includes(selectedTag);
         }
 
+        // Exclude projects from the main home timeline unless explicitly filtered by Projects category
+        if (post.type === 'project' && (!selectedCategoryPath || selectedCategoryPath[0] !== 'Projects')) {
+          return false;
+        }
+
         return matchesSearch && matchesCategory && matchesTag;
       });
     }
@@ -1710,20 +1715,23 @@
       filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
 
       filtered.forEach(post => {
+        const isProject = post.type === 'project';
+        const cardAction = isProject ? `window.open('${post.url}', '_blank')` : `openReader('${post.id}')`;
+        const extIcon = isProject ? ` <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:12px; color:var(--accent2); margin-left:4px;"></i>` : ``;
         const typeBadge = `<span class="badge-type ${post.type}">${post.type}</span>`;
         const eventLabel = post.event ? `<span class="post-event">${post.event}</span>` : '';
         const metaConnector = post.event ? ' &nbsp;&bull;&nbsp; ' : '';
         const tagPills = post.tags.map(t => `<span class="tag-pill">#${t}</span>`).join(' ');
 
         html += `
-          <div class="post-card" onclick="openReader('${post.id}')">
+          <div class="post-card" onclick="${cardAction}">
             <div class="post-card-meta">
               ${typeBadge}
               ${eventLabel}
               ${metaConnector}
               <span class="post-date">${post.date}</span>
             </div>
-            <div class="post-card-title">${post.title}</div>
+            <div class="post-card-title">${post.title}${extIcon}</div>
             <div class="post-card-summary">${post.summary}</div>
             <div class="post-card-tags">
               ${tagPills}
@@ -1815,9 +1823,12 @@
               `;
 
               leafNode._posts.forEach(p => {
+                const isProject = p.type === 'project';
+                const action = isProject ? `window.open('${p.url}', '_blank')` : `openReader('${p.id}')`;
+                const extIcon = isProject ? ` <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px; opacity:0.7; color:var(--accent2); margin-left:4px;"></i>` : ``;
                 html += `
-                  <a href="javascript:void(0)" class="category-post-link" onclick="openReader('${p.id}')">
-                    <span>${p.title}</span>
+                  <a href="javascript:void(0)" class="category-post-link" onclick="${action}">
+                    <span>${p.title}${extIcon}</span>
                     <span class="date">${p.date}</span>
                   </a>
                 `;
@@ -1839,9 +1850,12 @@
             `;
 
             subPosts.forEach(p => {
+              const isProject = p.type === 'project';
+              const action = isProject ? `window.open('${p.url}', '_blank')` : `openReader('${p.id}')`;
+              const extIcon = isProject ? ` <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px; opacity:0.7; color:var(--accent2); margin-left:4px;"></i>` : ``;
               html += `
-                <a href="javascript:void(0)" class="category-post-link" onclick="openReader('${p.id}')">
-                  <span>${p.title}</span>
+                <a href="javascript:void(0)" class="category-post-link" onclick="${action}">
+                  <span>${p.title}${extIcon}</span>
                   <span class="date">${p.date}</span>
                 </a>
               `;
@@ -1927,6 +1941,11 @@
     function openReader(postId) {
       const post = POSTS.find(p => p.id === postId);
       if (!post) return;
+
+      if (post.type === 'project') {
+        window.open(post.url, '_blank');
+        return;
+      }
 
       activePostId = postId;
       
