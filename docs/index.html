@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
   
   <!-- Highlight.js Code Highlighting -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   
   <style>
     :root {
@@ -1325,10 +1325,10 @@
 
   <!-- Dynamic JS Core Libraries -->
   <!-- Marked.js Markdown Parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
   
   <!-- Highlight.js Code Syntax Highlighter -->
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <script>
     const POSTS = [
@@ -1997,10 +1997,16 @@
           // Rewrite image/scripts relative links dynamically using DOM tree
           resolveRelativeLinks(contentBody, post);
 
-          // Trigger highlight.js code block rendering
-          contentBody.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightElement(block);
-          });
+          // Trigger highlight.js code block rendering safely if available
+          if (window.hljs && typeof hljs.highlightElement === 'function') {
+            contentBody.querySelectorAll('pre code').forEach((block) => {
+              try {
+                hljs.highlightElement(block);
+              } catch (e) {
+                console.warn("Syntax highlight warning:", e);
+              }
+            });
+          }
 
           // Scroll reader pane to top
           window.scrollTo({ top: 0 });
